@@ -1,38 +1,19 @@
-import type { NextPage } from "next";
 import Head from "next/head";
-import { FormEvent, useState } from "react";
-import styles from "../styles/Home.module.css";
+import type { NextPage } from "next";
+import { Formik } from "formik";
+import { contactSchema } from "../yup/contactSchema";
+
+interface FormValues {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
 
 const Home: NextPage = () => {
-  const [inputNameValue, setInputNameValue] = useState("");
-  const [inputEmailValue, setInputEmailValue] = useState("");
-  const [inputSubjectValue, setInputSubjectValue] = useState("");
-  const [inputMessageValue, setInputMessageValue] = useState("");
-
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (!inputEmailValue || !inputNameValue) {
-      return;
-    }
-
-    const data = {
-      name: inputNameValue,
-      email: inputEmailValue,
-      subject: inputSubjectValue,
-      message: inputMessageValue,
-    };
-
-    fetch("/api/mail/send", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-type": "application/json",
-      },
-    })
-      .then((r) => r.json())
-      .then((r) => console.log(r))
-      .catch((err) => console.log(err));
+  function onSubmit(e: FormValues) {
+    console.log(e);
   }
 
   return (
@@ -43,41 +24,83 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <form onSubmit={(e) => onSubmit(e)}>
-          <input
-            type="tel"
-            name="name"
-            id="name"
-            value={inputNameValue}
-            onChange={(e) => setInputNameValue(e.target.value)}
-          />
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={inputEmailValue}
-            onChange={(e) => setInputEmailValue(e.target.value)}
-          />
+      <main className="main">
+        <div className="formWrapper">
+          <Formik
+            initialValues={{} as FormValues}
+            onSubmit={(e: FormValues) => onSubmit(e)}
+            validationSchema={contactSchema}
+          >
+            {({ handleSubmit, handleChange, values, errors }) => (
+              <form onSubmit={handleSubmit} className="form">
+                <div className="inputBlock">
+                  <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    required
+                    placeholder="Your name"
+                    value={values.name}
+                    onChange={handleChange}
+                  />
+                  {errors.name && <span>{errors.name}</span>}
+                </div>
+                <div className="inputBlock">
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    placeholder="Your best email"
+                    value={values.email}
+                    onChange={handleChange}
+                  />
+                  {errors.email && <span>{errors.email}</span>}
+                </div>
 
-          <input
-            type="subject"
-            name="subject"
-            id="subject"
-            value={inputSubjectValue}
-            onChange={(e) => setInputSubjectValue(e.target.value)}
-          />
+                <div className="inputBlock">
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    required
+                    placeholder="Your phone number"
+                    value={values.phone}
+                    onChange={handleChange}
+                  />
+                  {errors.phone && <span>{errors.phone}</span>}
+                </div>
 
-          <textarea
-            name="message"
-            onChange={(e) => setInputMessageValue(e.target.value)}
-            value={inputMessageValue}
-            cols={30}
-            rows={10}
-            maxLength={120}
-          ></textarea>
-          <button type="submit">ENVIAR</button>
-        </form>
+                <div className="inputBlock">
+                  <input
+                    type="text"
+                    name="subject"
+                    id="subject"
+                    required
+                    placeholder="Type your subject"
+                    value={values.subject}
+                    onChange={handleChange}
+                  />
+                  {errors.subject && <span>{errors.subject}</span>}
+                </div>
+
+                <div className="inputBlock">
+                  <textarea
+                    name="message"
+                    value={values.message}
+                    onChange={handleChange}
+                    cols={30}
+                    rows={10}
+                    maxLength={120}
+                    placeholder="Give me a message"
+                  ></textarea>
+                  {errors.message && <span>{errors.message}</span>}
+                </div>
+                <button type="submit">ENVIAR</button>
+              </form>
+            )}
+          </Formik>
+        </div>
       </main>
     </div>
   );

@@ -1,0 +1,69 @@
+.main {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  width: 100%;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+.form input {
+  width: 320px;
+  height: 44px;
+
+  padding-left: 0.5rem;
+
+  border-radius: 0.2rem;
+}
+
+.inputBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputBlock span {
+  font-size: 14px;
+  color: Orange;
+}
+
+.form textarea {
+  width: 320px;
+  height: 120px;
+}
+
+.form button[type="submit"] {
+  width: 320px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  row-gap: 0.7rem;
+
+  background: purple;
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  border-radius: 0.2rem;
+
+  cursor: pointer;
+
+  transition: opacity 100ms linear;
+}
+
+.form button[type="submit"]:hover {
+  opacity: 0.8;
+}
