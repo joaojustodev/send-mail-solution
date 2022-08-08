@@ -6,6 +6,8 @@ import styles from "../styles/Home.module.css";
 const Home: NextPage = () => {
   const [inputNameValue, setInputNameValue] = useState("");
   const [inputEmailValue, setInputEmailValue] = useState("");
+  const [inputSubjectValue, setInputSubjectValue] = useState("");
+  const [inputMessageValue, setInputMessageValue] = useState("");
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -17,9 +19,20 @@ const Home: NextPage = () => {
     const data = {
       name: inputNameValue,
       email: inputEmailValue,
+      subject: inputSubjectValue,
+      message: inputMessageValue,
     };
 
-    console.log(data);
+    fetch("/api/mail/send", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((r) => r.json())
+      .then((r) => console.log(r))
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -46,6 +59,23 @@ const Home: NextPage = () => {
             value={inputEmailValue}
             onChange={(e) => setInputEmailValue(e.target.value)}
           />
+
+          <input
+            type="subject"
+            name="subject"
+            id="subject"
+            value={inputSubjectValue}
+            onChange={(e) => setInputSubjectValue(e.target.value)}
+          />
+
+          <textarea
+            name="message"
+            onChange={(e) => setInputMessageValue(e.target.value)}
+            value={inputMessageValue}
+            cols={30}
+            rows={10}
+            maxLength={120}
+          ></textarea>
           <button type="submit">ENVIAR</button>
         </form>
       </main>
