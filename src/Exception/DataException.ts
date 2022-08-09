@@ -1,4 +1,4 @@
-import { Exception } from "./../repositories/ExceptionRepositorie";
+import { Exception } from "../repositories/ExceptionRepositorie";
 
 export class DataException implements Exception {
   name: string;

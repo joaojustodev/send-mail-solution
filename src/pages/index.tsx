@@ -1,22 +1,21 @@
-import { ChangeEvent } from "react";
 import Head from "next/head";
+import type { ChangeEvent } from "react";
 import type { NextPage } from "next";
 import { Formik } from "formik";
+import { useAppDispatch, useAppSelector } from "../store/hook";
 import { formatPhoneNumber } from "../utils/formatPhoneNumber";
 import { contactSchema } from "../yup/contactSchema";
-
-interface FormValues {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+import { MailRepositorie } from "../repositories/MailRepositorie";
+import { sendMail } from "../store/reducer/mailReducer";
+import { FaSpinner } from "react-icons/fa";
 
 const Home: NextPage = () => {
-  function onSubmit(e: FormValues) {
+  const { error, loading, success } = useAppSelector((state) => state.mail);
+  const dispatch = useAppDispatch();
+
+  function onSubmit(data: MailRepositorie) {
     // call the api with data objects for send mail!
-    console.log(e);
+    dispatch(sendMail(data));
   }
 
   function handleFormatPhoneNumber(e: ChangeEvent<HTMLInputElement>) {
@@ -36,8 +35,11 @@ const Home: NextPage = () => {
       <main className="main">
         <div className="formWrapper">
           <Formik
-            initialValues={{} as FormValues}
-            onSubmit={async (e: FormValues) => onSubmit(e)}
+            initialValues={{} as MailRepositorie}
+            onSubmit={async (e: MailRepositorie, { resetForm }) => {
+              onSubmit(e);
+              resetForm({});
+            }}
             validationSchema={contactSchema}
             validateOnChange={false}
           >
@@ -94,7 +96,7 @@ const Home: NextPage = () => {
                   {errors.subject && <span>{errors.subject}</span>}
                 </div>
 
-                <div className="inputBlock">
+                <div className="inputBlock textAreaBlock">
                   <textarea
                     id="message"
                     name="message"
@@ -105,9 +107,18 @@ const Home: NextPage = () => {
                     maxLength={120}
                     placeholder="Give me a message"
                   ></textarea>
-                  {errors.message && <span>{errors.message}</span>}
+
+                  <div className="textareaFooter">
+                    <span>{errors.message && errors.message}</span>
+                    <strong>max: 300</strong>
+                  </div>
                 </div>
-                <button type="submit">ENVIAR</button>
+                <button type="submit" disabled={loading}>
+                  ENVIAR
+                  {loading && <FaSpinner size={16} />}
+                </button>
+                {error && <span>Ocorreu um error...</span>}
+                {success && <span>Deu tudo certo...</span>}
               </form>
             )}
           </Formik>
