@@ -1,6 +1,8 @@
+import { ChangeEvent } from "react";
 import Head from "next/head";
 import type { NextPage } from "next";
 import { Formik } from "formik";
+import { formatPhoneNumber } from "../utils/formatPhoneNumber";
 import { contactSchema } from "../yup/contactSchema";
 
 interface FormValues {
@@ -13,7 +15,14 @@ interface FormValues {
 
 const Home: NextPage = () => {
   function onSubmit(e: FormValues) {
+    // call the api with data objects for send mail!
     console.log(e);
+  }
+
+  function handleFormatPhoneNumber(e: ChangeEvent<HTMLInputElement>) {
+    e.target.value = formatPhoneNumber(e.target.value);
+
+    return e;
   }
 
   return (
@@ -28,8 +37,9 @@ const Home: NextPage = () => {
         <div className="formWrapper">
           <Formik
             initialValues={{} as FormValues}
-            onSubmit={(e: FormValues) => onSubmit(e)}
+            onSubmit={async (e: FormValues) => onSubmit(e)}
             validationSchema={contactSchema}
+            validateOnChange={false}
           >
             {({ handleSubmit, handleChange, values, errors }) => (
               <form onSubmit={handleSubmit} className="form">
@@ -64,9 +74,9 @@ const Home: NextPage = () => {
                     name="phone"
                     id="phone"
                     required
-                    placeholder="Your phone number"
+                    placeholder="(99) 99999-9999"
                     value={values.phone}
-                    onChange={handleChange}
+                    onChange={(e) => handleChange(handleFormatPhoneNumber(e))}
                   />
                   {errors.phone && <span>{errors.phone}</span>}
                 </div>
@@ -86,6 +96,7 @@ const Home: NextPage = () => {
 
                 <div className="inputBlock">
                   <textarea
+                    id="message"
                     name="message"
                     value={values.message}
                     onChange={handleChange}
