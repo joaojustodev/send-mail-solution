@@ -1,30 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import mailer from "nodemailer";
+import { MailerService } from "./../../../services/MailerServices";
+import { DataException } from "./../../../Exception/DataException";
 
 interface SendMailRequest {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
-}
-
-class ErrorBoundaries {
-  err?: any;
-  message: string;
-
-  constructor(message: string, err?: any) {
-    this.err = err;
-    this.message = message;
-    this.create();
-  }
-
-  private create() {
-    return {
-      timestamp: new Date(),
-      message: this.message,
-      error: this.err,
-    };
-  }
 }
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -35,50 +18,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const data = req.body as SendMailRequest;
 
-    if (!data.email || !data.name) {
-      throw new ErrorBoundaries("Name or email is missing!!");
+    if (
+      !data.email ||
+      !data.name ||
+      !data.subject ||
+      !data.phone ||
+      !data.message
+    ) {
+      throw new DataException(
+        "Any parameters is missing!! - Please, check the API documentation."
+      );
     }
 
-    const transporter = mailer.createTransport({
-      host: process.env.MAILER_HOST,
-      port: parseInt(process.env.MAILER_PORT as string),
-      secure: true,
-      auth: {
-        user: process.env.MAILER_AUTH_USER, // generated ethereal user
-        pass: process.env.MAILER_AUTH_PASS, // generated ethereal password
-      },
-    });
+    const mailTransaction = await new MailerService(data).sendMail();
 
-    const info = await transporter
-      .sendMail({
-        from: "joaoarantesjob@gmail.com",
-        to: "joaoarantesjob@gmail.com",
-        subject: "teste",
-        html: `
-        <head>
-        <style> h1 { color: red; } </style>
-        </head>
-        <h1>NOVO EMAIL</h1>
-        <p>${data.email} te enviou um email!</p>
-        <p>assunto: ${data.subject}</p>
-        <p>mensagem: ${data.message}</p>
-
-      
-  `,
-      })
-      .then((r) => r)
-      .catch((err) => {
-        if (err) {
-          throw new ErrorBoundaries("nao foi possivel enviar o email", err);
-        }
-      });
-
-    res.status(200).json(info);
+    res.status(200).json(mailTransaction);
   } catch (error) {
-    if (error instanceof ErrorBoundaries) {
-      res.status(404).json(error);
+    if (error instanceof DataException) {
+      res.status(404).json({ error });
     }
-    res.status(400).json(error);
+    res.status(400).json({ error });
   }
 }
 
