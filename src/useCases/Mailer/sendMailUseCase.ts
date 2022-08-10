@@ -5,8 +5,8 @@ export class SendMailUseCase {
   static async handle(data: MailerServiceDTO) {
     try {
       const info = await transporter.sendMail({
-        from: "joaoarantesjob@gmail.com",
-        to: "joaoarantesjob@gmail.com",
+        from: process.env.MAILER_FROM,
+        to: process.env.MAILER_TO,
         subject: "New email from contact",
         html: `
           <head>

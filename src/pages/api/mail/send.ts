@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { MailerService } from "./../../../services/MailerServices";
-import { DataException } from "../../../exception/DataException";
+import { MailerService } from "../../../services/MailerServices";
+import { DataException } from "../../../exceptions/DataException";
 
 interface SendMailRequest {
   name: string;
