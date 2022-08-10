@@ -1,0 +1,30 @@
+@mixin rotate($duration) {
+  transform: rotate 100ms linear;
+  animation: rotate $duration linear infinite;
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+@mixin showIn($duration, $delay: 0ms) {
+  animation: showIn $duration $delay linear forwards;
+
+  @keyframes showIn {
+    0% {
+      opacity: 0;
+      transform: translateY(60px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

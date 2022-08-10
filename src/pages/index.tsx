@@ -2,11 +2,13 @@ import Head from "next/head";
 import type { ChangeEvent } from "react";
 import type { NextPage } from "next";
 import { Formik } from "formik";
+import { sendMail } from "../store/reducer/mailReducer";
 import { useAppDispatch, useAppSelector } from "../store/hook";
+import { MailRepositorie } from "../repositories/MailRepositorie";
 import { formatPhoneNumber } from "../utils/formatPhoneNumber";
 import { contactSchema } from "../yup/contactSchema";
-import { MailRepositorie } from "../repositories/MailRepositorie";
-import { sendMail } from "../store/reducer/mailReducer";
+import Input from "../components/Ui/Input";
+import Button from "../components/Ui/Button";
 import { FaSpinner } from "react-icons/fa";
 
 const Home: NextPage = () => {
@@ -46,7 +48,7 @@ const Home: NextPage = () => {
             {({ handleSubmit, handleChange, values, errors }) => (
               <form onSubmit={handleSubmit} className="form">
                 <div className="inputBlock">
-                  <input
+                  <Input
                     type="text"
                     name="name"
                     id="name"
@@ -58,7 +60,7 @@ const Home: NextPage = () => {
                   {errors.name && <span>{errors.name}</span>}
                 </div>
                 <div className="inputBlock">
-                  <input
+                  <Input
                     type="email"
                     name="email"
                     id="email"
@@ -71,7 +73,7 @@ const Home: NextPage = () => {
                 </div>
 
                 <div className="inputBlock">
-                  <input
+                  <Input
                     type="text"
                     name="phone"
                     id="phone"
@@ -84,7 +86,7 @@ const Home: NextPage = () => {
                 </div>
 
                 <div className="inputBlock">
-                  <input
+                  <Input
                     type="text"
                     name="subject"
                     id="subject"
@@ -113,10 +115,12 @@ const Home: NextPage = () => {
                     <strong>max: 300</strong>
                   </div>
                 </div>
-                <button type="submit" disabled={loading}>
-                  ENVIAR
-                  {loading && <FaSpinner size={16} />}
-                </button>
+                <div className="submitWrapper">
+                  <Button type="submit" disabled={loading}>
+                    ENVIAR
+                    {loading && <FaSpinner size={16} />}
+                  </Button>
+                </div>
                 {error && <span>Ocorreu um error...</span>}
                 {success && <span>Deu tudo certo...</span>}
               </form>
